@@ -1,0 +1,11 @@
+language: clojure
+lein: lein
+dist: xenial
+jdk:
+  - oraclejdk8
+jobs:
+  include:
+    - stage: compile
+      script: lein modules install
+    - stage: test
+      script: lein modules test
