@@ -3,15 +3,15 @@
 
   :target-path "target/%s"
 
-  :profiles {:uberjar  {:aot          :all
-                        :dependencies [[org.clojure/clojure "_"]]}
-             :provided {:dependencies [[org.clojure/clojure "_"]]}
+  :profiles {:uberjar           {:aot          :all
+                                 :dependencies [[org.clojure/clojure "_"]]}
+             :provided          {:dependencies [[org.clojure/clojure "_"]]}
 
-             :dev {:plugins      [[lein-kibit "0.1.6"]
-                                  [jonase/eastwood "0.3.3"]
-                                  [lein-ancient "0.6.15"]
-                                  [test2junit "1.4.2"]]
-                   :dependencies [[org.clojure/tools.reader "_"]]}
+             :dev               {:plugins      [[lein-kibit "0.1.6"]
+                                                [jonase/eastwood "0.3.3"]
+                                                [lein-ancient "0.6.15"]
+                                                [test2junit "1.4.2"]]
+                                 :dependencies [[org.clojure/tools.reader "_"]]}
 
              :limited-resources {:jvm-opts ["-Xms1g" "-Xmx1g" "-XX:+HeapDumpOnOutOfMemoryError"
                                             "-Xss512k" "-XX:MetaspaceSize=256m" "-XX:MaxMetaspaceSize=256m"
@@ -22,17 +22,17 @@
             [com.andrewmcveigh/lein-auto-release "0.1.10"]]
 
   :modules {
-            :versions {org.clojure/clojure                                  "1.10.1"
-                       com.taoensso/timbre                                  "4.10.0"
-                       org.clojure/core.async                               "1.0.567"
-                       org.clojure/tools.reader                             "1.3.2"
-                       instaparse                                           "1.4.10"
-                       cheshire                                             "5.8.1"
-                       org.clojure/clojurescript                            "1.10.339"
-                       com.github.ben-manes.caffeine/caffeine               "2.8.0"
-                       funcool/promesa                                      "5.1.0"
-                       com.cognitect/transit-clj                            "0.8.313"
-                       gnl/ghostwheel                                       "0.3.9"}}
+            :versions {org.clojure/clojure                    "1.10.1"
+                       com.taoensso/timbre                    "4.10.0"
+                       org.clojure/core.async                 "1.0.567"
+                       org.clojure/tools.reader               "1.3.2"
+                       instaparse                             "1.4.10"
+                       cheshire                               "5.8.1"
+                       org.clojure/clojurescript              "1.10.339"
+                       com.github.ben-manes.caffeine/caffeine "2.8.0"
+                       funcool/promesa                        "5.1.0"
+                       com.cognitect/transit-clj              "0.8.313"
+                       gnl/ghostwheel                         "0.3.9"}}
 
   :release-tasks [["auto-release" "checkout" "master"]
                   ["auto-release" "merge-no-ff" "develop"]
@@ -52,7 +52,6 @@
 
   :packaging "pom"
   :pom-addition [:modules
-                 [:module "ghostwheel-stub"]
                  [:module "auth"]
                  [:module "basic-auth"]
                  [:module "common"]
@@ -63,4 +62,10 @@
                  [:module "global-domain"]
                  [:module "metrics-domain"]
                  [:module "bus-domain"]
-                 [:module "local-node"]])
+                 [:module "local-node"]]
+
+  :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
+                                    :username      :env/clojars_user
+                                    :password      :env/clojars_pass
+                                    :sign-releases false}]]
+  )
