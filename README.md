@@ -1,3 +1,3 @@
 # Glue42 Gateway Core
 
-[![Build Status](https://travis-ci.com/Glue42/gateway-core.svg?token=M3e9FTy4JXxGzquyke2J&branch=master)](https://travis-ci.com/Glue42/gateway-core)
+![Build Gateway Core](https://github.com/Glue42/gateway-core/workflows/Build%20Gateway%20Core/badge.svg)
