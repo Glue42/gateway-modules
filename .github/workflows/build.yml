@@ -8,8 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: lein modules install
-    - name: Test
-      run: lein modules test
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8'
+
+      - uses: DeLaGuardo/setup-clojure@2.0
+        with:
+          tools-deps: '1.10.1.483'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: maven
+
+      - name: Cache Git dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.gitlibs
+          key: gitlibs
+
+      - name: Build
+        run: lein modules install
+        
+      - name: Test
+        run: lein modules test

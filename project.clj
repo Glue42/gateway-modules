@@ -1,5 +1,3 @@
-(def versions {:metrics "0.1.8"})
-
 (defproject com.tick42.gateway/core-parent "3.0.7-SNAPSHOT"
   :description "Tick42 Gateway Core Parent"
 
