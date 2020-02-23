@@ -1,0 +1,6 @@
+language: clojure
+lein: lein
+dist: xenial
+script: ./bin/ci/build.sh
+jdk:
+  - openjdk8
