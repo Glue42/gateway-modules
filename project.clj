@@ -1,5 +1,8 @@
 (defproject com.tick42.gateway/core-parent "3.0.7-SNAPSHOT"
   :description "Tick42 Gateway Core Parent"
+  :url "https://github.com/Glue42/gateway-core"
+  :license {:name "Apache License 2.0"
+            :url "http://www.apache.org/licenses/LICENSE-2.0"}
 
   :target-path "target/%s"
 

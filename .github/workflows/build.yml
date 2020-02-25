@@ -40,4 +40,4 @@ jobs:
         env:
           CLOJARS_USER: ${{ secrets.CLOJARS_USER }}
           CLOJARS_PASS: ${{ secrets.CLOJARS_PASS }}
-        run: lein deploy clojars
+        run: lein modules deploy clojars
