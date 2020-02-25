@@ -2,7 +2,7 @@
   :description "Tick42 Gateway Core Parent"
   :url "https://github.com/Glue42/gateway-core"
   :license {:name "Apache License 2.0"
-            :url "http://www.apache.org/licenses/LICENSE-2.0"}
+            :url  "http://www.apache.org/licenses/LICENSE-2.0"}
 
   :target-path "target/%s"
 
@@ -24,18 +24,25 @@
   :plugins [[lein-modules "0.3.11"]
             [com.andrewmcveigh/lein-auto-release "0.1.10"]]
 
-  :modules {
-            :versions {org.clojure/clojure                    "1.10.1"
-                       com.taoensso/timbre                    "4.10.0"
-                       org.clojure/core.async                 "1.0.567"
-                       org.clojure/tools.reader               "1.3.2"
-                       instaparse                             "1.4.10"
-                       cheshire                               "5.8.1"
-                       org.clojure/clojurescript              "1.10.339"
-                       com.github.ben-manes.caffeine/caffeine "2.8.0"
-                       funcool/promesa                        "5.1.0"
-                       com.cognitect/transit-clj              "0.8.313"
-                       gnl/ghostwheel                         "0.3.9"}}
+  :modules {:inherited {:url                 "https://github.com/Glue42/gateway-core"
+                        :license             {:name "Apache License 2.0"
+                                              :url  "http://www.apache.org/licenses/LICENSE-2.0"}
+                        :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
+                                                          :username      :env/CLOJARS_USER
+                                                          :password      :env/CLOJARS_PASS
+                                                          :sign-releases false}]]}
+
+            :versions  {org.clojure/clojure                    "1.10.1"
+                        com.taoensso/timbre                    "4.10.0"
+                        org.clojure/core.async                 "1.0.567"
+                        org.clojure/tools.reader               "1.3.2"
+                        instaparse                             "1.4.10"
+                        cheshire                               "5.8.1"
+                        org.clojure/clojurescript              "1.10.339"
+                        com.github.ben-manes.caffeine/caffeine "2.8.0"
+                        funcool/promesa                        "5.1.0"
+                        com.cognitect/transit-clj              "0.8.313"
+                        gnl/ghostwheel                         "0.3.9"}}
 
   :release-tasks [["auto-release" "checkout" "master"]
                   ["auto-release" "merge-no-ff" "develop"]
@@ -66,9 +73,4 @@
                  [:module "metrics-domain"]
                  [:module "bus-domain"]
                  [:module "local-node"]]
-
-  :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
-                                    :username      :env/clojars_user
-                                    :password      :env/clojars_pass
-                                    :sign-releases false}]]
   )
