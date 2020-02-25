@@ -36,8 +36,8 @@ jobs:
       - name: Test
         run: lein modules test
 
-     - name: Publish
-       env:
-         CLOJARS_USER: ${{ secrets.CLOJARS_USER }}
-         CLOJARS_PASS: ${{ secrets.CLOJARS_PASS }}
-       run: lein deploy clojars
+      - name: Publish
+        env:
+          CLOJARS_USER: ${{ secrets.CLOJARS_USER }}
+          CLOJARS_PASS: ${{ secrets.CLOJARS_PASS }}
+        run: lein deploy clojars
