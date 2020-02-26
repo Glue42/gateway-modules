@@ -72,5 +72,6 @@
                  [:module "global-domain"]
                  [:module "metrics-domain"]
                  [:module "bus-domain"]
-                 [:module "local-node"]]
+                 [:module "local-node"]
+                 [:module "ghostwheel-stub"]]
   )
