@@ -26,10 +26,12 @@
             [gateway.common.commands :as commands]
 
             [clojure.walk :refer [keywordize-keys]]
+            [promesa.core :as p]
 
             [ghostwheel.core :as g :refer [>defn >defn- >fdef => | <- ?]]
             [gateway.state.spec.state :as s]
             [gateway.common.spec.messages :as message-spec]
+
             [clojure.spec.alpha :as spec]))
 
 (def ^:redef -measurements- nil)
@@ -133,12 +135,12 @@
 
         (state-> [state [welcome]]
                  ;(ann-f peer)
-                 (context-compatibility source {:request_id request-id
-                                                :peer_id (:id peer)
-                                                :identity resolved-identity
-                                                :options options
+                 (context-compatibility source {:request_id  request-id
+                                                :peer_id     (:id peer)
+                                                :identity    resolved-identity
+                                                :options     options
                                                 :destination c/context-domain-uri
-                                                :domain constants/global-domain-uri})))
+                                                :domain      constants/global-domain-uri})))
 
       (catch #?(:clj  Exception
                 :cljs :default) e
@@ -305,19 +307,19 @@
 
         (if-let [authenticator (get-in authenticators [:available requested-provider])]
           (do
-            (auth/authenticate authenticator {:request_id      request-id
-                                              :remote-identity remote-identity
-                                              :authentication  authentication}
-                               (fn [msg]
-                                 (let [msg' (case (:type msg)
-                                              :success (assoc msg :type ::internal/authenticated)
-                                              :failure (assoc msg :type ::internal/authentication-failed)
-                                              :continue (assoc msg :type ::internal/authentication-request))]
-
-                                   (a/put! ch {:origin :local
-                                               :source source
-                                               :body   (assoc msg' :request_id request-id
-                                                                   :remote-identity remote-identity)}))))
+            (-> (auth/authenticate authenticator {:request_id      request-id
+                                                  :remote-identity remote-identity
+                                                  :authentication  authentication})
+                (p/then (fn [msg] (update msg :type (fn [t] (case t
+                                                              :success ::internal/authenticated
+                                                              :continue ::internal/authentication-request
+                                                              t)))))
+                (p/catch (fn [err] (-> (ex-data err)
+                                       (assoc :type ::internal/authentication-failed))))
+                (p/then (fn [msg] (a/put! ch {:origin :local
+                                              :source source
+                                              :body   (assoc msg :request_id request-id
+                                                                 :remote-identity remote-identity)}))))
             [state nil])
 
           [state [(error constants/global-domain-uri

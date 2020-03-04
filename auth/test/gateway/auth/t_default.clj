@@ -3,16 +3,16 @@
             [gateway.auth.impl :as d]
             [promesa.core :as p]
 
-            [clojure.test :refer :all]))
+            [clojure.test :refer [deftest is]]))
 
 (deftest authenticator-timeout
   (let [impl (reify d/AuthImpl
-               (auth [this authentication-request result-fn]))
+               (auth [this _]
+                 (p/delay 2000)))
         auth (d/authenticator {:timeout 500} impl)
-        rp (p/create (fn [resolve _]
-                       (c/authenticate auth {:authentication {:method "secret"
-                                                              :login  "test-user"
-                                                              :secret "test-pass"}} resolve)))]
+        rp (c/authenticate auth {:authentication {:method "secret"
+                                                  :login  "test-user"
+                                                  :secret "test-pass"}})]
 
     (is (= {:message "Authentication timed out"
             :type    :failure} @(p/timeout rp 1000)))
@@ -21,16 +21,15 @@
 (deftest authenticator-success
   (let [l "test-user"
         impl (reify d/AuthImpl
-               (auth [this authentication-request result-fn]
+               (auth [this authentication-request]
                  (let [l (get-in authentication-request [:authentication :login])]
-                   (result-fn {:type  :success
-                               :user  l
-                               :login l}))))
+                   (p/resolved {:type  :success
+                                :user  l
+                                :login l}))))
         auth (d/authenticator {:timeout 10000} impl)
-        rp (p/create (fn [resolve _]
-                       (c/authenticate auth {:authentication {:method "secret"
-                                                              :login  l
-                                                              :secret l}} resolve)))]
+        rp (c/authenticate auth {:authentication {:method "secret"
+                                                  :login  l
+                                                  :secret l}})]
 
     (is (= {:type  :success
             :login l

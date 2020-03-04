@@ -1,4 +1,4 @@
-(defproject com.tick42.gateway/global-domain "3.0.7-SNAPSHOT"
+(defproject com.tick42.gateway/global-domain "3.0.8-SNAPSHOT"
   :plugins [[lein-modules "0.3.11"]
             [lein-cljsbuild "1.1.7"]
             [lein-doo "0.1.10"]]
@@ -9,7 +9,8 @@
                  [com.taoensso/timbre "_"]
                  [gnl/ghostwheel "_"]
 
-                 [org.clojure/core.async "_"]]
+                 [org.clojure/core.async "_"]
+                 [funcool/promesa "_"]]
 
   :profiles {:dev {:dependencies   [[com.tick42.gateway/basic-auth :version]
                                     [com.tick42.gateway/local-node :version]

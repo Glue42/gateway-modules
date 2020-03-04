@@ -26,29 +26,19 @@
     response))
 
 (defprotocol AuthImpl
-  (auth [this authentication-request result-fn]))
-
-
-(>defn process-response
-  [callback-fn response]
-  [fn? ::s/response => any?]
-  (callback-fn response))
+  (auth [this authentication-request]))
 
 (>defn -authenticate!
-  [authenticator-ch timeout authentication-request callback-fn]
-  [any? int? ::s/request fn? => any?]
+  [authenticator-ch timeout authentication-request]
+  [any? int? ::s/request => any?]
   (if authenticator-ch
-    (-> (p/create (fn [resolve _] (a/put! authenticator-ch [resolve authentication-request])))
-        (p/timeout timeout)
-        (p/then (partial process-response callback-fn))
-        (p/catch (fn [err]
-                   (timbre/warn err "Authentication error")
-                   (process-response callback-fn {:type    :failure
-                                                  :message "Authentication timed out"}))))
+    (-> (p/create (fn [resolve reject] (a/put! authenticator-ch [resolve reject authentication-request])))
+        (p/timeout timeout {:type    :failure
+                            :message "Authentication timed out"}))
 
 
-    (process-response callback-fn {:type    :failure
-                                   :message "No authenticator configured"})))
+    (p/rejected (ex-info "No authenticator configured" {:type    :failure
+                                                        :message "No authenticator configured"}))))
 
 (deftype DefaultAuthenticator [authenticator-ch timeout]
   Authenticator
@@ -56,8 +46,8 @@
     (when authenticator-ch
       (util/close-and-flush! authenticator-ch)))
 
-  (authenticate [this authentication-request callback-fn]
-    (-authenticate! authenticator-ch timeout authentication-request callback-fn)))
+  (authenticate [this authentication-request]
+    (-authenticate! authenticator-ch timeout authentication-request)))
 
 (defn authenticator
   [config impl]
@@ -66,9 +56,11 @@
     (a/go-loop []
       (let [msg (a/<! ch)]
         (when msg
-          (let [[source authentication-request] msg
+          (let [[resolve reject authentication-request] msg
                 authentication-request (update authentication-request :authentication keywordize-keys)]
             (timbre/debug "processing authentication" (sanitize (:authentication authentication-request)))
-            (auth impl authentication-request source)
+            (-> (auth impl authentication-request)
+                (p/then (fn [v] (resolve v)))
+                (p/catch (fn [v] (reject v))))
             (recur)))))
     (DefaultAuthenticator. ch (:timeout config default-authentication-timeout))))

@@ -1,4 +1,4 @@
-(defproject com.tick42.gateway/bus-domain "3.0.7-SNAPSHOT"
+(defproject com.tick42.gateway/bus-domain "3.0.8-SNAPSHOT"
   :plugins [[lein-modules "0.3.11"]
             [lein-cljsbuild "1.1.7"]
             [lein-doo "0.1.10"]]
